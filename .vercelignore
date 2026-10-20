@@ -1,0 +1,13 @@
+.git
+.venv
+node_modules
+private
+artifacts
+test-results
+playwright-report
+tests
+docs
+deliverables
+.env*
+!/.env.example
+**/__pycache__

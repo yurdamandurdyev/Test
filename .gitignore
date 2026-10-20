@@ -1,0 +1,17 @@
+.venv/
+node_modules/
+dist/
+__pycache__/
+.pytest_cache/
+.coverage
+.env
+.env.*
+!.env.example
+private/
+artifacts/
+test-results/
+playwright-report/
+*.log
+.vercel/
+*.egg-info/
+*.tsbuildinfo

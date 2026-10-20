@@ -1,0 +1,11 @@
+.git
+.venv
+node_modules
+dist
+private
+artifacts
+test-results
+playwright-report
+.env*
+**/__pycache__
+**/*.egg-info
