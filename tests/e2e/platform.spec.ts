@@ -8,20 +8,21 @@ async function login(page: import('@playwright/test').Page) {
 }
 test('demo navigation, filters, downloads, no browser errors',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/');await expect(page.getByText('Синтетические данные',{exact:false})).toBeVisible();
- await expect(page.locator('.metric').first()).toContainText('5');
+ await page.goto('/');await expect(page.getByText('Исходные данные задания',{exact:false})).toBeVisible();
+ await expect(page.locator('.metric').first()).toContainText('8');
  await page.getByRole('button',{name:'Лиды и CRM',exact:true}).click();
- await page.getByLabel('Поиск записей').fill('Демо 03');
+ await page.getByLabel('Поиск записей').fill('Света');
  await expect(page.locator('tbody tr')).toHaveCount(1);
  await page.getByLabel('Поиск записей').fill('no match');
  await expect(page.getByText('Совпадений нет')).toBeVisible();
  await page.getByLabel('Поиск записей').fill('');
  await page.getByLabel('Источник лидов').selectOption('Сайт');
- await expect(page.locator('tbody tr')).toHaveCount(2);
+ await expect(page.locator('tbody tr')).toHaveCount(1);
  const download=page.waitForEvent('download');await page.getByRole('button',{name:'JSON',exact:true}).click();
- expect((await download).suggestedFilename()).toBe('synthetic-demo-report.json');
- await page.getByRole('button',{name:'Аналитика звонков',exact:true}).click();await expect(page.getByText('Расшифровки не публикуются')).toBeVisible();
+ expect((await download).suggestedFilename()).toBe('assignment-demo-report.json');
+ await page.getByRole('button',{name:'Аналитика звонков',exact:true}).click();await expect(page.locator('.metric').first()).toContainText('57.95%');
  await page.getByRole('button',{name:'База знаний',exact:true}).click();await expect(page.getByRole('link',{name:'Читать памятку'})).toBeVisible();
+ const pdfDownload=page.waitForEvent('download');await page.getByRole('link',{name:'Скачать PDF · A4'}).click();expect((await pdfDownload).suggestedFilename()).toBe('knowledge.pdf');
  await page.getByRole('button',{name:'Telegram',exact:true}).click();await expect(page.getByText('Схема диалога · не живой бот')).toBeVisible();
  expect(errors).toEqual([]);
 });
@@ -58,7 +59,7 @@ for (const width of [390,768,1440]) test(`responsive ${width}px without page ove
  await expect(page.locator('.recharts-surface')).toBeVisible();
  await page.screenshot({path:`test-results/overview-${width}.png`,fullPage:true});
  if(width<760) await page.getByRole('button',{name:'Открыть меню'}).click();
- await page.getByRole('button',{name:'Лиды и CRM',exact:true}).click();await expect(page.locator('tbody tr')).toHaveCount(5);
+ await page.getByRole('button',{name:'Лиды и CRM',exact:true}).click();await expect(page.locator('tbody tr')).toHaveCount(8);
  await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
  for (const label of ['База знаний','Telegram','Аналитика звонков']) {
   if(width<760) await page.getByRole('button',{name:'Открыть меню'}).click();
@@ -66,9 +67,9 @@ for (const width of [390,768,1440]) test(`responsive ${width}px without page ove
   await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
  }
 });
-test('calls with actual private annotations when supplied',async({page})=>{
- test.skip(!process.env.CALLS_ANNOTATIONS_PATH,'Private original dataset is supplied only in private QA runs.');
- await page.goto('/');await login(page);await page.getByRole('button',{name:'Аналитика звонков',exact:true}).click();
+test('original calls publicly accessible without login',async({page})=>{
+
+ await page.goto('/');await page.getByRole('button',{name:'Аналитика звонков',exact:true}).click();
  await expect(page.locator('.metric').first()).toContainText('57.95%');
  await page.getByRole('button',{name:/Звонок 4/}).click();await expect(page.locator('.call-summary')).toContainText('55');
  await page.getByText('Открыть полную расшифровку').click();await expect(page.locator('.transcript pre')).toContainText('ИИ, поставь');
@@ -77,5 +78,5 @@ test('calls with actual private annotations when supplied',async({page})=>{
 test('API error displays recoverable state',async({page})=>{
  await page.route('**/api/demo',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({detail:'Тестовая недоступность'})}));
  await page.goto('/');await expect(page.getByRole('alert')).toContainText('Тестовая недоступность');
- await page.unroute('**/api/demo');await page.getByRole('button',{name:'Открыть демо'}).click();await expect(page.locator('.metric').first()).toContainText('5');
+ await page.unroute('**/api/demo');await page.getByRole('button',{name:'Открыть демо'}).click();await expect(page.locator('.metric').first()).toContainText('8');
 });

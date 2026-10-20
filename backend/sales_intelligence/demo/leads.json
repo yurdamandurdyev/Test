@@ -1,0 +1,320 @@
+{
+  "methodology_version": "1.0",
+  "anchor": "2026-10-19",
+  "row_count": 8,
+  "day": {
+    "start": "2026-10-19",
+    "end": "2026-10-19",
+    "count": 3,
+    "sources": {
+      "Авито": 1,
+      "Яндекс": 2
+    },
+    "budget_mean": 8000000.0,
+    "budget_positive_mean": 12000000.0,
+    "budget_known": 3,
+    "budget_positive": 2,
+    "budget_missing": 0,
+    "budget_invalid": 0,
+    "budget_zero": 1,
+    "unique_phones": 2,
+    "unidentified": 0
+  },
+  "week": {
+    "start": "2026-10-13",
+    "end": "2026-10-19",
+    "count": 8,
+    "sources": {
+      "Авито": 3,
+      "Сайт": 1,
+      "Сарафан": 1,
+      "Яндекс": 3
+    },
+    "budget_mean": 6916666.67,
+    "budget_positive_mean": 10375000.0,
+    "budget_known": 6,
+    "budget_positive": 4,
+    "budget_missing": 2,
+    "budget_invalid": 0,
+    "budget_zero": 2,
+    "unique_phones": 6,
+    "unidentified": 0
+  },
+  "alternative": {
+    "excluded_row_ids": [
+      2
+    ],
+    "day": {
+      "start": "2026-10-19",
+      "end": "2026-10-19",
+      "count": 2,
+      "sources": {
+        "Авито": 1,
+        "Яндекс": 1
+      },
+      "budget_mean": 6000000.0,
+      "budget_positive_mean": 12000000.0,
+      "budget_known": 2,
+      "budget_positive": 1,
+      "budget_missing": 0,
+      "budget_invalid": 0,
+      "budget_zero": 1,
+      "unique_phones": 2,
+      "unidentified": 0
+    },
+    "week": {
+      "start": "2026-10-13",
+      "end": "2026-10-19",
+      "count": 7,
+      "sources": {
+        "Авито": 3,
+        "Сайт": 1,
+        "Сарафан": 1,
+        "Яндекс": 2
+      },
+      "budget_mean": 5900000.0,
+      "budget_positive_mean": 9833333.33,
+      "budget_known": 5,
+      "budget_positive": 3,
+      "budget_missing": 2,
+      "budget_invalid": 0,
+      "budget_zero": 2,
+      "unique_phones": 6,
+      "unidentified": 0
+    }
+  },
+  "quality": {
+    "budget_missing": 2,
+    "budget_zero": 2,
+    "potential_duplicate": 2
+  },
+  "duplicate_groups": [
+    [
+      1,
+      2
+    ]
+  ],
+  "repeat_contacts": [
+    {
+      "phone": "Контакт 02",
+      "row_ids": [
+        3,
+        8
+      ],
+      "dates": [
+        "2026-10-18",
+        "2026-10-19"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "id": 1,
+      "line": 2,
+      "raw": {
+        "дата": "19.10.2026",
+        "имя": "Марина",
+        "телефон": "Контакт 01",
+        "источник": "Яндекс",
+        "бюджет": "12000000"
+      },
+      "date": "2026-10-19",
+      "name": "Марина",
+      "phone": "Контакт 01",
+      "source": "Яндекс",
+      "budget": 12000000.0,
+      "budget_exact": "12000000",
+      "budget_status": "positive",
+      "issues": [
+        "potential_duplicate"
+      ]
+    },
+    {
+      "id": 2,
+      "line": 3,
+      "raw": {
+        "дата": "2026-10-19",
+        "имя": "Марина",
+        "телефон": "Контакт 01",
+        "источник": "yandex",
+        "бюджет": "12000000"
+      },
+      "date": "2026-10-19",
+      "name": "Марина",
+      "phone": "Контакт 01",
+      "source": "Яндекс",
+      "budget": 12000000.0,
+      "budget_exact": "12000000",
+      "budget_status": "positive",
+      "issues": [
+        "potential_duplicate"
+      ]
+    },
+    {
+      "id": 3,
+      "line": 4,
+      "raw": {
+        "дата": "18.10.2026",
+        "имя": "Олег",
+        "телефон": "Контакт 02",
+        "источник": "Авито",
+        "бюджет": "0"
+      },
+      "date": "2026-10-18",
+      "name": "Олег",
+      "phone": "Контакт 02",
+      "source": "Авито",
+      "budget": 0.0,
+      "budget_exact": "0",
+      "budget_status": "zero",
+      "issues": [
+        "budget_zero"
+      ]
+    },
+    {
+      "id": 4,
+      "line": 5,
+      "raw": {
+        "дата": "18.10.2026",
+        "имя": "Света",
+        "телефон": "Контакт 03",
+        "источник": "Я.Директ",
+        "бюджет": ""
+      },
+      "date": "2026-10-18",
+      "name": "Света",
+      "phone": "Контакт 03",
+      "source": "Яндекс",
+      "budget": null,
+      "budget_exact": null,
+      "budget_status": "missing",
+      "issues": [
+        "budget_missing"
+      ]
+    },
+    {
+      "id": 5,
+      "line": 6,
+      "raw": {
+        "дата": "17.10.2026",
+        "имя": "Илья",
+        "телефон": "Контакт 04",
+        "источник": "сайт",
+        "бюджет": "8500000"
+      },
+      "date": "2026-10-17",
+      "name": "Илья",
+      "phone": "Контакт 04",
+      "source": "Сайт",
+      "budget": 8500000.0,
+      "budget_exact": "8500000",
+      "budget_status": "positive",
+      "issues": []
+    },
+    {
+      "id": 6,
+      "line": 7,
+      "raw": {
+        "дата": "2026-10-17",
+        "имя": "Дмитрий",
+        "телефон": "Контакт 05",
+        "источник": "Авито",
+        "бюджет": ""
+      },
+      "date": "2026-10-17",
+      "name": "Дмитрий",
+      "phone": "Контакт 05",
+      "source": "Авито",
+      "budget": null,
+      "budget_exact": null,
+      "budget_status": "missing",
+      "issues": [
+        "budget_missing"
+      ]
+    },
+    {
+      "id": 7,
+      "line": 8,
+      "raw": {
+        "дата": "16.10.2026",
+        "имя": "Ксения",
+        "телефон": "Контакт 06",
+        "источник": "сарафан",
+        "бюджет": "9000000"
+      },
+      "date": "2026-10-16",
+      "name": "Ксения",
+      "phone": "Контакт 06",
+      "source": "Сарафан",
+      "budget": 9000000.0,
+      "budget_exact": "9000000",
+      "budget_status": "positive",
+      "issues": []
+    },
+    {
+      "id": 8,
+      "line": 9,
+      "raw": {
+        "дата": "19.10.2026",
+        "имя": "Олег",
+        "телефон": "Контакт 02",
+        "источник": "Авито",
+        "бюджет": "0"
+      },
+      "date": "2026-10-19",
+      "name": "Олег",
+      "phone": "Контакт 02",
+      "source": "Авито",
+      "budget": 0.0,
+      "budget_exact": "0",
+      "budget_status": "zero",
+      "issues": [
+        "budget_zero"
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "date": "2026-10-13",
+      "count": 0
+    },
+    {
+      "date": "2026-10-14",
+      "count": 0
+    },
+    {
+      "date": "2026-10-15",
+      "count": 0
+    },
+    {
+      "date": "2026-10-16",
+      "count": 1
+    },
+    {
+      "date": "2026-10-17",
+      "count": 2
+    },
+    {
+      "date": "2026-10-18",
+      "count": 2
+    },
+    {
+      "date": "2026-10-19",
+      "count": 3
+    }
+  ],
+  "budget_distribution": {
+    "Ноль": 2,
+    "До 10 млн": 2,
+    "10–15 млн": 2,
+    "От 15 млн": 0,
+    "Нет / ошибка": 2
+  },
+  "notes": [
+    "Основная сводка сохраняет все строки; некорректные даты исключены только из временных агрегатов.",
+    "Средний бюджет включает явно указанные нули, исключает пропуски и ошибки; положительное среднее показано отдельно.",
+    "Совпадение имени не означает дубль. Группы по телефону — гипотеза, а не подтверждение личности.",
+    "Альтернативный сценарий оставляет первую строку каждого полного нормализованного совпадения.",
+    "Контакты маскированы после расчёта. Метрики и связи записей сохранены; экспорт не является исходным CSV для повторного анализа."
+  ]
+}

@@ -167,20 +167,23 @@ def calls():
         raise HTTPException(503, "Не удалось загрузить аннотации звонков. Проверьте настройку сервера.")
 
 
-DEMO = """дата,имя,телефон,источник,бюджет
-2026-10-19,Демо 01,DEMO-001,Сайт,5000000
-2026-10-19,Демо 02,DEMO-002,Авито,0
-2026-10-18,Демо 03,DEMO-003,Яндекс,9000000
-2026-10-17,Демо 04,DEMO-004,Сайт,
-2026-10-16,Демо 05,DEMO-005,Сарафан,7000000
-"""
+DEMO_DIR = Path(__file__).parent / "demo"
 
 
 @app.get("/api/demo")
 def demo():
-    return {"demo": True, "report": analyze(DEMO.encode())}
+    return {"demo": True, "report": json.loads((DEMO_DIR / "leads.json").read_text())}
+
+
+@app.get("/api/demo/calls")
+def demo_calls():
+    return json.loads((DEMO_DIR / "calls.json").read_text())
 
 
 @app.get("/api/demo.csv")
 def demo_csv():
-    return Response(DEMO, media_type="text/csv; charset=utf-8", headers={"Content-Disposition": 'attachment; filename="synthetic-demo.csv"'})
+    return Response(export_csv(demo()["report"]), media_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": 'attachment; filename="assignment-masked-export.csv"'})
+
+from .webhook import router as telegram_router
+app.include_router(telegram_router)

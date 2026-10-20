@@ -3,6 +3,7 @@
 import argparse
 import csv
 import re
+import os
 import subprocess
 from pathlib import Path
 
@@ -18,17 +19,16 @@ needles: set[str] = set()
 if args.private_csv:
     with args.private_csv.open(encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
-            needles.update((row["имя"], row["телефон"], re.sub(r"\D", "", row["телефон"])))
-if args.private_calls:
-    text = args.private_calls.read_text()
-    needles.update(re.findall(r"(?:зовут |», )([А-ЯЁ][а-яё]+)[.,]", text))
+            needles.update((row["телефон"], re.sub(r"\D", "", row["телефон"])))
 env_file = root / '.env'
 if env_file.exists():
     for line in env_file.read_text().splitlines():
         if '=' in line:
             key, value = line.split('=', 1)
-            if key in {'APP_PASSWORD', 'SESSION_SECRET', 'TELEGRAM_BOT_TOKEN'} and value:
+            if key in {'APP_PASSWORD', 'SESSION_SECRET', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_WEBHOOK_SECRET', 'UPSTASH_REDIS_REST_TOKEN'} and value:
                 needles.add(value)
+for key in ('APP_PASSWORD', 'SESSION_SECRET', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_WEBHOOK_SECRET', 'UPSTASH_REDIS_REST_TOKEN', 'VERCEL_TOKEN'):
+    if os.getenv(key): needles.add(os.environ[key])
 errors = []
 for path in paths:
     if not path.is_file():

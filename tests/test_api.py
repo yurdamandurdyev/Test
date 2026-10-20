@@ -43,7 +43,9 @@ def test_csrf_and_invalid_files(client):
 def test_public_demo_has_no_valid_phones(client):
     report = client.get("/api/demo").json()
     assert report["demo"]
-    assert all(r["phone"] is None and r["name"].startswith("Демо") for r in report["report"]["rows"])
+    assert len(report["report"]["rows"]) == 8
+    assert all(r["phone"].startswith("Контакт") for r in report["report"]["rows"])
+    assert client.get("/api/demo/calls").json()["average"] == 57.95
     assert client.get("/api/calls").status_code == 401
     assert not client.get("/api/session").json()["authenticated"]
 
