@@ -118,7 +118,7 @@ Polling выбран осознанно: Vercel serverless не запускае
 
 Готовы `vercel.json`, ASGI entrypoint `api/index.py`, `requirements.txt` с хешами, Vite production build. Хеш-навигация не требует универсального SPA-rewrite; `/api/*` направляется в Python-функцию.
 
-1. Разместите **только содержимое этого публичного проекта** в GitHub. Не загружайте приватный комплект сдачи, `.env`, папки оригиналов и результатов.
+1. Исходники опубликованы в [yurdamandurdyev/Test](https://github.com/yurdamandurdyev/Test), ветка `main`. Импортируйте этот репозиторий. При переносе публикуйте **только содержимое проекта**: без приватного комплекта сдачи, `.env`, оригиналов и результатов.
 2. В Vercel выберите **Add New → Project → Import Git Repository**. Root Directory — корень проекта; framework Vite, Node 24, build `npm run build`, output `dist`. Настройки берутся из `vercel.json`.
 3. Для публичного демо оставьте `APP_PASSWORD`, `SESSION_SECRET` и `CALLS_ANNOTATIONS_*` незаданными. Демо открывается, приватные API закрыты.
 4. Для закрытой работы задайте через Vercel Environment Variables случайные `APP_PASSWORD` (≥16 символов), `SESSION_SECRET` (≥32), `COOKIE_SECURE=true`. Не используйте префикс `VITE_`: он предназначен для клиентских переменных. Включите защиту проекта / rate limit `/api/login` в Vercel Firewall до работы с CRM. In-memory лимитер не даёт глобальных гарантий в serverless.
