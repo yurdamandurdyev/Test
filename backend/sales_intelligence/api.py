@@ -87,7 +87,7 @@ class Login(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "methodology_version": "1.0", "telegram_ui_version": "2.0"}
+    return {"status": "ok", "methodology_version": "1.0", "telegram_ui_version": "2.0.1"}
 
 
 @app.get("/api/session")

@@ -179,3 +179,12 @@ def test_telegram_limit_counts_decoded_html(csv_data):
     visible=html.unescape(re.sub(r'<[^>]*>','',text))
     assert len(visible.encode('utf-16-le'))//2<4000
     assert '<&' not in text
+
+
+def test_chart_labels_leave_space_for_counts():
+    from sales_intelligence.report_pdf import fonts,fitted_label
+    from reportlab.pdfbase import pdfmetrics
+    fonts()
+    label=fitted_label('Ш'*1000)
+    assert label.endswith('…')
+    assert pdfmetrics.stringWidth(label,'Signal',9)<=425

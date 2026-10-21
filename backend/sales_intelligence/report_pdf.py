@@ -23,6 +23,15 @@ def fonts():
             pdfmetrics.registerFontFamily('Signal',normal='Signal',bold='SignalBold',italic='Signal',boldItalic='SignalBold')
 
 
+def fitted_label(value, max_width=425):
+    text=plain(value, 80)
+    if pdfmetrics.stringWidth(text, 'Signal', 9)<=max_width:
+        return text
+    while text and pdfmetrics.stringWidth(text+'…', 'Signal', 9)>max_width:
+        text=text[:-1]
+    return text+'…'
+
+
 class Bars(Flowable):
     def __init__(self,items,width=475):
         Flowable.__init__(self);self.items=items;self.width=width;self.height=len(items)*33+8
@@ -30,7 +39,7 @@ class Bars(Flowable):
         c=self.canv;maximum=max((v for _,v in self.items),default=1) or 1
         for index,(label,value) in enumerate(self.items):
             y=self.height-22-index*33
-            c.setFont('Signal',9);c.setFillColor(INK);c.drawString(0,y,plain(label,49));c.drawRightString(self.width,y,str(value))
+            c.setFont('Signal',9);c.setFillColor(INK);c.drawString(0,y,fitted_label(label,self.width-50));c.drawRightString(self.width,y,str(value))
             c.setFillColor(LINE);c.roundRect(0,y-12,self.width,5,2,fill=1,stroke=0)
             if value:
                 c.setFillColor(GREEN);c.roundRect(0,y-12,self.width*value/maximum,5,2,fill=1,stroke=0)
