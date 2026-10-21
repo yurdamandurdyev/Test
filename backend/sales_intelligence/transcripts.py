@@ -56,7 +56,7 @@ def automatic(text,expected):
         greeting=found(r'^(?:добрый день|доброе утро|добрый вечер|здравствуйте)\b',t['text'])
         name=found(r'\bменя зовут\s+[а-яё-]+',t['text'])
         project=found(r'\bЖК\s+[«"]([^»"\n]+)[»"]',t['text'])
-        if expected and greeting and name and expected.casefold() in t['text'].casefold() and clear(t['text']):
+        if expected and greeting and name and expected.casefold() in t['text'].casefold() and (not project or project[1].strip().casefold()==expected.casefold()) and clear(t['text']):
             criteria['intro']=item('pass','В реплике менеджера есть приветствие, представление и указанный вами ЖК.',t['quote'])
         elif expected and project and project[1].strip().casefold()!=expected.casefold():
             criteria['intro']=item('fail','Назван другой ЖК. Сравнение выполнено с указанным вами названием.',t['quote'])

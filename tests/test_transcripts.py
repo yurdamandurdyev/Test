@@ -61,6 +61,7 @@ def test_keywords_conditions_third_parties_and_comments_are_not_proof(text,key):
 
 def test_explicit_failures_and_contradictions():
     assert criterion(analyze(FULL.replace('ЖК «Северная Гавань»','ЖК «Другой»')),'intro')['status']=='fail'
+    assert criterion(analyze(FULL.replace('ЖК «Северная Гавань»','ЖК «Северная Гавань 2»')),'intro')['status']=='fail'
     assert criterion(analyze(FULL.replace('Да, приеду.','Нет, не приеду.')),'meeting')['status']=='fail'
     assert criterion(analyze(FULL+'\nК: Отменяем встречу.'),'meeting')['status']=='review'
 
