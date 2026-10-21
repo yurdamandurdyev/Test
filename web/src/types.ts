@@ -28,3 +28,12 @@ export interface CallReport {
   criteria: { key: string; label: string; weight: number; passed: number; total: number }[];
   managers: { name: string; count: number; average: number }[];
 }
+
+export type RuleStatus = 'pass' | 'fail' | 'review';
+export interface RuleEvidence { status: RuleStatus; reason: string; quote: string; reviewed: boolean }
+export interface RuleCriterion extends RuleEvidence { key: string; label: string; weight: number; points: number | null; automatic?: RuleEvidence }
+export interface RuleCall { id: number; name: string; transcript: string; manager: string; connected: boolean | null; criteria: RuleCriterion[]; pending: number; confirmed_points: number; possible_points: number; percent: number | null; raw_score: number | null; unparsed_lines: number[]; turns: {role: string; text: string; quote: string; line: number}[]; recommendations: string[]; metadata_reviewed: boolean }
+export interface RuleReport { version: string; expected_project: string; calls: RuleCall[]; attempts: number; connected: number; unclassified: number; pending: number; average: number | null; low: number | null; high: number | null; managers: {name: string; count: number; average: number | null; low: number; high: number; pending: number}[]; criteria: {key: string; label: string; weight: number; passed: number; failed: number; review: number; total: number}[]; limitations: string[] }
+export interface CallReview {manager?: string; connected?: boolean | null; criteria?: Record<string,{status: RuleStatus; reason: string; quote: string}>}
+export interface TranscriptInput {documents: {name: string; text: string}[]; expected_project: string; reviews: Record<string,CallReview>}
+export interface CallSummary { mode: string; attempts: number; average: number | null; pending: number }

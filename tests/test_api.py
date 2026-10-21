@@ -18,8 +18,8 @@ HEADERS = {"X-Sales-Client": "web", "Content-Type": "text/csv", "X-File-Name": "
 def sign_in(client):
     return client.post("/api/login", json={"password": "test-only-password-never-deploy"}, headers={"X-Sales-Client": "web"})
 
-def test_upload_private_and_same_core(client, csv_data):
-    assert client.post("/api/analyze", content=csv_data, headers=HEADERS).status_code == 401
+def test_upload_public_and_same_core(client, csv_data):
+    assert client.post("/api/analyze", content=csv_data, headers=HEADERS).status_code == 200
     response = sign_in(client)
     assert response.status_code == 200
     assert "httponly" in response.headers["set-cookie"].lower()

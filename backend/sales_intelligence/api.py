@@ -1,4 +1,5 @@
 from __future__ import annotations
+import asyncio
 import base64
 import hashlib
 import hmac
@@ -17,6 +18,8 @@ from pydantic import BaseModel, Field, ValidationError
 
 from .analytics import MAX_BYTES, InputError, analyze, export_csv
 from .calls import score_calls
+from .public_limits import public_limit
+from .transcripts import documents_to_calls, export_report
 
 app = FastAPI(title="Sales Intelligence", docs_url=None, redoc_url=None, openapi_url=None)
 SESSION_SECONDS = 8 * 3600
@@ -87,7 +90,7 @@ class Login(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "methodology_version": "1.0", "telegram_ui_version": "2.0.1"}
+    return {"status": "ok", "methodology_version": "1.0", "telegram_ui_version": "2.0.1", "web_ui_version": "3.0"}
 
 
 @app.get("/api/session")
@@ -144,12 +147,12 @@ async def uploaded(request: Request) -> dict:
     return analyze(bytes(payload))
 
 
-@app.post("/api/analyze", dependencies=[Depends(require_user), Depends(mutation)])
+@app.post("/api/analyze", dependencies=[Depends(mutation), Depends(public_limit)])
 async def analyze_upload(request: Request):
     return await uploaded(request)
 
 
-@app.post("/api/export", dependencies=[Depends(require_user), Depends(mutation)])
+@app.post("/api/export", dependencies=[Depends(mutation), Depends(public_limit)])
 async def export_upload(request: Request):
     return Response(export_csv(await uploaded(request)), media_type="text/csv; charset=utf-8",
                     headers={"Content-Disposition": 'attachment; filename="leads-normalized.csv"'})
@@ -187,3 +190,30 @@ def demo_csv():
 
 from .webhook import router as telegram_router
 app.include_router(telegram_router)
+
+
+async def transcript_request(request: Request):
+    if request.headers.get('content-type','').split(';')[0]!='application/json':
+        raise InputError('Ожидается текстовый запрос JSON.')
+    payload=bytearray()
+    async for chunk in request.stream():
+        if len(payload)+len(chunk)>MAX_BYTES:raise InputError('Запрос больше 2 МБ.')
+        payload.extend(chunk)
+    try:
+        data=json.loads(payload)
+    except (ValueError,UnicodeDecodeError):raise InputError('Некорректный запрос.')
+    if not isinstance(data,dict) or set(data)-{'documents','expected_project','reviews'}:raise InputError('Некорректные поля запроса.')
+    return await asyncio.to_thread(documents_to_calls,data.get('documents'),data.get('expected_project',''),data.get('reviews'))
+
+
+@app.post('/api/transcripts/analyze', dependencies=[Depends(mutation),Depends(public_limit)])
+async def analyze_transcripts(request: Request):
+    return await transcript_request(request)
+
+
+@app.post('/api/transcripts/export', dependencies=[Depends(mutation),Depends(public_limit)])
+async def export_transcripts(request: Request, format: str='csv'):
+    if format not in ('csv','html'):raise InputError('Выберите CSV или HTML.')
+    report=await transcript_request(request)
+    return Response(export_report(report,format),media_type='text/csv; charset=utf-8' if format=='csv' else 'text/html; charset=utf-8',
+                    headers={'Content-Disposition':f'attachment; filename="calls-reviewed.{format}"'})

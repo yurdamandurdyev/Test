@@ -1,11 +1,5 @@
 import { test, expect } from '@playwright/test';
 const data = Buffer.from('дата,имя,телефон,источник,бюджет\n2026-10-19,Тест А,+70000000001,Сайт,1000000\n2026-10-18,Тест Б,+70000000002,Авито,3000000\n2026-10-19,Тест В,+70000000003,Сайт,0\n');
-async function login(page: import('@playwright/test').Page) {
- await page.getByRole('button',{name:'Войти',exact:true}).click();
- await page.getByLabel('Пароль',{exact:true}).fill('e2e-fixture-password-not-production');
- await page.getByRole('dialog').getByRole('button',{name:'Войти',exact:true}).click();
- await expect(page.getByRole('dialog')).toHaveCount(0);
-}
 test('demo navigation, filters, downloads, no browser errors',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');await expect(page.getByText('Исходные данные задания',{exact:false})).toBeVisible();
@@ -21,13 +15,14 @@ test('demo navigation, filters, downloads, no browser errors',async({page})=>{
  const download=page.waitForEvent('download');await page.getByRole('button',{name:'JSON',exact:true}).click();
  expect((await download).suggestedFilename()).toBe('assignment-demo-report.json');
  await page.getByRole('button',{name:'Аналитика звонков',exact:true}).click();await expect(page.locator('.metric').first()).toContainText('57.95%');
- await page.getByRole('button',{name:'База знаний',exact:true}).click();await expect(page.getByRole('link',{name:'Читать памятку'})).toBeVisible();
- const pdfDownload=page.waitForEvent('download');await page.getByRole('link',{name:'Скачать PDF · A4'}).click();expect((await pdfDownload).suggestedFilename()).toBe('knowledge.pdf');
- await page.getByRole('button',{name:'Telegram',exact:true}).click();await expect(page.getByText('Схема диалога · не живой бот')).toBeVisible();
+ await expect(page.getByRole('button',{name:'База знаний',exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:'Telegram',exact:true}).click();
+ await expect(page.getByRole('link',{name:'Открыть Telegram-бота'})).toHaveAttribute('href','https://t.me/SALES_INTELLIGENCE_test_bot');
+ await expect(page.getByRole('link',{name:'Открыть Telegram-бота'})).toHaveAttribute('target','_blank');
  expect(errors).toEqual([]);
 });
-test('authorized upload recalculates, export matches backend, invalid file preserves report, logout clears data',async({page})=>{
- await page.goto('/');await login(page);
+test('public upload recalculates, export matches backend, invalid file preserves report, demo resets data',async({page})=>{
+ await page.goto('/');
  await page.getByLabel('Загрузить CSV файл').setInputFiles({name:'new.csv',mimeType:'text/csv',buffer:data});
  await expect(page.locator('tbody tr')).toHaveCount(3);
  await expect(page.locator('.metric').nth(1)).toContainText('1,33 млн ₽');
@@ -40,12 +35,17 @@ test('authorized upload recalculates, export matches backend, invalid file prese
  const csvDownload=page.waitForEvent('download');await page.getByRole('button',{name:'CSV',exact:true}).click();expect((await csvDownload).suggestedFilename()).toBe('leads-normalized.csv');
  await page.getByLabel('Загрузить CSV файл').setInputFiles({name:'bad.csv',mimeType:'text/csv',buffer:Buffer.from('broken')});
  await expect(page.getByRole('alert')).toContainText('столбцов');await expect(page.locator('tbody tr')).toHaveCount(3);
- await page.getByRole('button',{name:'Выйти',exact:true}).click();await expect(page.getByText('Начните с данных')).toBeVisible();
+ await page.getByRole('button',{name:'Открыть демо',exact:true}).click();
+ await expect(page.locator('.metric').first()).toContainText('3');
+ await page.getByRole('button',{name:'7 дней',exact:true}).click();
+ await expect(page.locator('.metric').first()).toContainText('8');
  expect(await page.evaluate(()=>localStorage.length)).toBe(0);
- await expect(page.locator('tbody tr')).toHaveCount(0);
+ await page.getByRole('button',{name:'Лиды и CRM',exact:true}).click();
+ await expect(page.locator('tbody tr')).toHaveCount(8);
+ await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 test('large registry pagination and formula text are safe',async({page})=>{
- await page.goto('/');await login(page);
+ await page.goto('/');
  const csv='дата,имя,телефон,источник,бюджет\n'+Array.from({length:38},(_,i)=>`2026-10-19,${i===0?'<img src=x onerror=alert(1)>':'Тест '+i},DEMO-${i},Сайт,10`).join('\n');
  await page.getByLabel('Загрузить CSV файл').setInputFiles({name:'many.csv',mimeType:'text/csv',buffer:Buffer.from(csv)});
  await expect(page.locator('tbody tr')).toHaveCount(15);await expect(page.locator('tbody img')).toHaveCount(0);
@@ -61,7 +61,7 @@ for (const width of [390,768,1440]) test(`responsive ${width}px without page ove
  if(width<760) await page.getByRole('button',{name:'Открыть меню'}).click();
  await page.getByRole('button',{name:'Лиды и CRM',exact:true}).click();await expect(page.locator('tbody tr')).toHaveCount(8);
  await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
- for (const label of ['База знаний','Telegram','Аналитика звонков']) {
+ for (const label of ['Telegram','Аналитика звонков']) {
   if(width<760) await page.getByRole('button',{name:'Открыть меню'}).click();
   await page.getByRole('button',{name:label,exact:true}).click();
   await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);

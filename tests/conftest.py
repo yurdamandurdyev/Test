@@ -65,3 +65,11 @@ def make_update():
             data={'update_id':update_id,'message':message}
         return Update.de_json(data,bot)
     return make
+
+@pytest.fixture(autouse=True)
+def isolated_public_limits(monkeypatch):
+    from sales_intelligence.public_limits import local_counts
+    local_counts.clear()
+    monkeypatch.delenv('VERCEL',raising=False)
+    monkeypatch.delenv('UPSTASH_REDIS_REST_URL',raising=False)
+    monkeypatch.delenv('UPSTASH_REDIS_REST_TOKEN',raising=False)
