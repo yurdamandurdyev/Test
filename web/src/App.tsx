@@ -114,7 +114,7 @@ export default function App() {
       <main id="main">
         <div className="mode-banner"><ShieldCheck size={15}/><span>{page==='calls'?'ЗВОНКИ · Проверенные демоданные и ваши расшифровки — отдельные наборы.':demo?'ДЕМО · Исходные данные задания. Контакты маскированы после расчёта; все записи сохранены.':'ВАШ ФАЙЛ · Обрабатывается в памяти. Не сохраняется на сервере и исчезает после обновления вкладки.'}</span><button onClick={()=>void loadDemo()} disabled={loading}>Открыть демо <ArrowRight size={14}/></button></div>
         {error && <div className="alert" role="alert"><span>{error}</span><button aria-label="Закрыть сообщение" onClick={() => setError('')}><X size={16} /></button></div>}
-        <div className="page-heading"><div><p className="eyebrow">SALES INTELLIGENCE / {String(navigation.findIndex(n => n.id === page) + 1).padStart(2, '0')}</p><h1>{{ overview: 'Продажи в фокусе', calls: 'Качество каждого разговора', crm: 'От данных — к решениям', telegram: 'Аналитика там, где вы' }[page]}</h1><p className="heading-description">{{ overview: 'Вся картина отдела. Без догадок и скрытых допущений.', calls: 'Каждый балл подтверждён репликой. Каждый вывод можно проверить.', crm: 'Лиды, источники и качество данных в одном пространстве.', telegram: 'Тот же расчёт. Привычный интерфейс Telegram.' }[page]}</p></div><div className="heading-actions">{(page === 'overview' || page === 'crm') && uploadButton}</div></div>
+        <div className={`page-heading${page === 'telegram' ? ' integration-heading' : ''}`}><div><p className="eyebrow">SALES INTELLIGENCE / {String(navigation.findIndex(n => n.id === page) + 1).padStart(2, '0')}</p><h1>{{ overview: 'Продажи в фокусе', calls: 'Качество каждого разговора', crm: 'От данных — к решениям', telegram: 'Аналитика там, где вы' }[page]}</h1><p className="heading-description">{{ overview: 'Вся картина отдела. Без догадок и скрытых допущений.', calls: 'Каждый балл подтверждён репликой. Каждый вывод можно проверить.', crm: 'Лиды, источники и качество данных в одном пространстве.', telegram: 'Тот же расчёт. Привычный интерфейс Telegram.' }[page]}</p></div><div className="heading-actions">{(page === 'overview' || page === 'crm') && uploadButton}</div></div>
         <input type="file" accept=".csv,text/csv" ref={fileRef} className="sr-only" aria-label="Загрузить CSV файл" onChange={e => { void upload(e.target.files?.[0]); e.target.value = ''; }} />
         {loading && <div className="loading" role="status"><span />Обрабатываем данные…</div>}
         {(page === 'overview' || page === 'crm') && (report && current ? <>
@@ -132,7 +132,31 @@ export default function App() {
           </>}
         </> : !loading && <Empty title="Начните с данных">Откройте демопример или загрузите CSV без регистрации. Все показатели появятся после обработки.</Empty>)}
         <div hidden={page!=='calls'}><CallsWorkspace onSummary={setCallSummary}/></div>
-        {page==='telegram'&&<Panel title="Аналитика в вашем Telegram" subtitle="Короткая сводка и подробности по запросу"><div className="telegram-intro"><span className="telegram-logo"><Send size={28}/></span><h2>Отправьте файл. Получите ясность.</h2><p>Загрузите CSV с лидами: бот покажет заявки за день и неделю, бюджеты, источники и записи, которые стоит проверить.</p><p>Открывайте подробности кнопками, скачивайте PDF для руководителя и таблицу данных.</p><a className="button primary telegram-cta" href="https://t.me/SALES_INTELLIGENCE_test_bot" target="_blank" rel="noopener noreferrer"><Send size={18}/>Открыть Telegram-бота</a><p className="muted">Доступ к боту предоставляется разрешённым пользователям. Если бот сообщает об ограничении, обратитесь к администратору.</p></div></Panel>}
+        {page === 'telegram' && <section className="integration-layout" aria-label="Telegram-интеграция">
+          <div className="integration-copy">
+            <div className="integration-identity"><span className="integration-icon"><Send size={22} strokeWidth={1.6} /></span><span>Signal в Telegram<small>Аналитика в привычном чате</small></span></div>
+            <h2>От файла — к понятной сводке.</h2>
+            <p className="integration-description">Отправьте CSV с лидами. Бот покажет заявки за день и неделю, бюджеты, источники и записи, которые стоит проверить.</p>
+            <div className="integration-benefits">
+              <p><SlidersHorizontal size={16} /><span>Подробности — по кнопкам под отчётом</span></p>
+              <p><ArrowDownToLine size={16} /><span>PDF для руководителя и таблица данных</span></p>
+            </div>
+            <a className="button primary integration-cta" href="https://t.me/SALES_INTELLIGENCE_test_bot" target="_blank" rel="noopener noreferrer">Открыть Telegram-бота<ArrowUpRight size={17} /></a>
+            <p className="integration-access"><ShieldCheck size={15} /><span>Доступ — для разрешённых пользователей. Если бот сообщает об ограничении, обратитесь к администратору.</span></p>
+          </div>
+          <figure className="integration-preview" aria-label="Пример отчёта по исходному набору">
+            <figcaption><span>ПРИМЕР СВОДКИ</span><span className="integration-example-label">Данные задания</span></figcaption>
+            <div className="integration-report">
+              <div className="integration-report-heading"><FileSpreadsheet size={18} /><div><h3>Лиды за неделю</h3><p>13–19 октября 2026</p></div></div>
+              <dl className="integration-totals"><div><dt>Заявки</dt><dd>8</dd></div><div><dt>Распознанные телефоны</dt><dd>6</dd></div></dl>
+              <div className="integration-budget"><span>Средний бюджет</span><strong>6 916 666,67 <small>₽</small></strong><p>По 6 значениям, включая 2 нулевых</p></div>
+              <div className="integration-report-sources"><h4>Источники заявок</h4><dl><div><dt>Яндекс</dt><dd>3</dd></div><div><dt>Авито</dt><dd>3</dd></div><div><dt>Сайт</dt><dd>1</dd></div><div><dt>Сарафан</dt><dd>1</dd></div></dl></div>
+              <div className="integration-review"><CircleHelp size={16} /><div><h4>Стоит проверить</h4><p>2 заявки без бюджета · 1 группа возможных дублей. Записи не удалены.</p></div></div>
+            </div>
+            <p className="integration-preview-note">Пример содержания отчёта, не активный чат. Ваш результат строится по загруженному CSV.</p>
+          </figure>
+        </section>}
+
         <footer className="page-footer"><span><span className="tiny-mark">s.</span>Signal · Sales Intelligence</span><span>Методика 1.0 <span className="footer-dot">·</span> Доказательства вместо догадок</span></footer>
       </main>
     </div>
