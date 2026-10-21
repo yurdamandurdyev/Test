@@ -25,7 +25,7 @@ for logger in ('httpx', 'httpcore', 'telegram'):
 
 
 class Store:
-    """REST Redis: only opaque update IDs / hashes; all records expire."""
+    """REST Redis adapter; all assistant records have bounded TTLs."""
     async def command(self, *args):
         url = os.environ['UPSTASH_REDIS_REST_URL']
         if urlsplit(url).scheme != 'https' or not urlsplit(url).hostname:
@@ -88,6 +88,9 @@ async def process(update: Update, bot: Bot, store: Store, prefix: str):
     chat = update.effective_chat.id
     user = update.effective_user.id
     stage = f'{prefix}:update:{update.update_id}'
+    from .telegram_calls import handle as handle_calls
+    if await handle_calls(update, bot, store, prefix):
+        return
     if query:
         match = CALLBACK.fullmatch(query.data or '')
         if not match:
@@ -128,7 +131,7 @@ async def process(update: Update, bot: Bot, store: Store, prefix: str):
         await bot.send_message(chat, WELCOME, parse_mode='HTML')
         return
     if not doc.file_name or not doc.file_name.lower().endswith('.csv') or doc.mime_type not in MIME_TYPES:
-        await bot.send_message(chat, 'Нужна выгрузка CSV. В CRM или Excel выберите «CSV UTF-8» и прикрепите её как файл, не как фото или архив.')
+        await bot.send_message(chat, 'Нужен CSV для CRM или TXT для звонков. В CRM или Excel выберите «CSV UTF-8» и прикрепите её как файл, не как фото или архив.')
         return
     if doc.file_size is None or doc.file_size > MAX_BYTES:
         await bot.send_message(chat, 'Файл больше 2 МБ или размер неизвестен. Разделите выгрузку и отправьте меньший CSV.')
@@ -199,7 +202,7 @@ async def deliver(data, bot, store, prefix):
                     await process(update, bot, store, prefix)
                 except InputError:
                     if update.callback_query:
-                        await edit(bot, update.effective_chat.id, update.effective_message.message_id, 'Не удалось открыть исходный файл. Отправьте CSV заново.')
+                        await edit(bot, update.effective_chat.id, update.effective_message.message_id, 'Не удалось открыть исходный файл. '+('Отправьте TXT или текст заново.' if (update.callback_query.data or '').startswith('c:') else 'Отправьте CSV заново.'))
                     else:
                         raise
             await store.command('SET', key + ':done', '1', 'EX', 604800)
