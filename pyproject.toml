@@ -6,10 +6,15 @@ dependencies = [
   "fastapi==0.152.0",
   "uvicorn==0.34.2",
   "python-telegram-bot==22.0",
+  "reportlab==4.4.10",
 ]
 
 [project.optional-dependencies]
-test = ["pytest==9.0.3", "httpx==0.28.1"]
+test = [
+    "pytest==9.0.3",
+    "httpx==0.28.1",
+    "pypdf>=6,<7",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["backend", "."]
@@ -23,4 +28,4 @@ requires = ["setuptools>=75"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.package-data]
-sales_intelligence = ["demo/*.json"]
+sales_intelligence = ["demo/*.json", "fonts/*.ttf", "fonts/LICENSE.txt"]

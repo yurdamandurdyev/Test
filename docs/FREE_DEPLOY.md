@@ -1,3 +1,5 @@
+> Telegram v2: актуальный сценарий, повторная регистрация callback_query и правила хранения — [TELEGRAM_ASSISTANT.md](TELEGRAM_ASSISTANT.md).
+
 # Бесплатная демонстрация: запуск без токена Vercel
 
 ## Что подходит и что ещё не подтверждено
@@ -57,7 +59,7 @@ Storage / Marketplace → Upstash Redis → проверьте Free, созда�
 .venv/bin/python scripts/telegram_setup.py status
 ```
 
-`register` проверяет Bot API, устанавливает секретный заголовок, `max_connections=1`, только message updates, не удаляет ожидающие обновления. Скрипт не меняет Vercel env. Проверка статуса не выводит потенциально чувствительные ошибки Telegram. Токен Vercel не нужен. Telegram должен обращаться к Production URL без редиректа на login.
+`register` проверяет Bot API, устанавливает секретный заголовок, `max_connections=1`, message и callback_query updates, не удаляет ожидающие обновления. Скрипт не меняет Vercel env. Проверка статуса не выводит потенциально чувствительные ошибки Telegram. Токен Vercel не нужен. Telegram должен обращаться к Production URL без редиректа на login.
 
 ## 5. Реальная приёмка
 

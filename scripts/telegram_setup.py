@@ -31,11 +31,12 @@ async def run(mode):
             parsed = urlsplit(base)
             if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.query or parsed.fragment or parsed.path or len(secret) < 32:
                 raise ValueError('Invalid configuration')
-            await bot.set_webhook(base + '/api/telegram/webhook', secret_token=secret, allowed_updates=['message'], max_connections=1, drop_pending_updates=False)
+            await bot.set_webhook(base + '/api/telegram/webhook', secret_token=secret, allowed_updates=['message', 'callback_query'], max_connections=1, drop_pending_updates=False)
             print('Webhook registered; pending updates preserved. Stop every polling instance.')
         else:
             print('Webhook configured:', bool(status.url))
             print('Pending updates:', status.pending_update_count)
+            print('Callback delivery enabled:', 'callback_query' in (status.allowed_updates or ()))
             print('Telegram reports delivery error:', bool(status.last_error_date))
 
 if __name__ == '__main__':

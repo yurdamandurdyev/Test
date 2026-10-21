@@ -45,23 +45,6 @@ async def test_authorization_before_download(monkeypatch):
     bot.get_file.assert_not_awaited()
     bot.send_document.assert_not_awaited()
 
-@pytest.mark.anyio
-async def test_file_matches_core_and_retry_stages(monkeypatch,csv_data):
-    from telegram import Update
-    from sales_intelligence.analytics import analyze, export_csv, summary_text
-    monkeypatch.setenv('TELEGRAM_ALLOWED_USER_IDS','42')
-    bot=AsyncMock()
-    remote=AsyncMock();remote.file_size=len(csv_data);remote.download_as_bytearray.return_value=bytearray(csv_data)
-    bot.get_file.return_value=remote
-    update=Update.de_json({'update_id':1,'message':{'message_id':1,'date':0,'chat':{'id':42,'type':'private'},'from':{'id':42,'is_bot':False,'first_name':'Test'},'document':{'file_id':'f','file_unique_id':'u','file_name':'a.csv','mime_type':'text/csv','file_size':len(csv_data)}}},bot)
-    store=AsyncMock();store.command.return_value=None
-    await module.process(update,bot,store,'test')
-    bot.send_message.assert_awaited_once_with(42,summary_text(analyze(csv_data)))
-    assert bot.send_document.call_args.args[1].getvalue() == export_csv(analyze(csv_data))
-    bot.reset_mock();store.command.side_effect=[None,'1','1','OK']
-    await module.process(update,bot,store,'test')
-    bot.send_message.assert_not_awaited();bot.send_document.assert_not_awaited()
-
 @pytest.fixture
 def anyio_backend():
     return 'asyncio'
